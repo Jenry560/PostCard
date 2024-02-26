@@ -1,0 +1,153 @@
+﻿@model PostCard.Models.ViewModel.CreateModel;
+@using Microsoft.AspNetCore.Authorization;
+
+@{
+    bool isAuthenticated = false;
+    if (ViewBag.User != null)
+    {
+        if (User != null && User.Identity != null)
+        {
+            isAuthenticated = User.Identity.IsAuthenticated;
+        }
+    }
+
+    
+}
+
+
+<div class="container content_home">
+        <div class="card_container  ">
+            @if(ViewBag.Post.Count == 0)
+            {
+                <h1 style="font-family: Protest Riot, sans-serif;">
+                    There is not post in database
+                </h1>
+            }
+            @foreach (var item in ViewBag.Post)
+            {
+
+
+                <div class="card pb-3 @(isAuthenticated ? "pt-4": "") " style="width: 18rem; height: min-content;">
+                     <div class="img-container @(isAuthenticated ? "" : "dark")">
+                       <img class="card-img-top img " src="data:image/jpg; base64, @item.Image" alt="Card image cap">
+                    </div>
+                    <div class="texto">
+                        <i class="fa fa-user"></i>
+                        <div class="">@item.Usuarios.Name @item.Usuarios.LastName</div>
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Title </h5>
+                        <p class="card-text">@item.Menssage</p>
+                        <p class="card-text" style="color: gray">#@item.Tags</p>
+                        @if (item.UsuarioId == ViewBag.Usuario)
+                        {
+                            <a asp-action="Editar" type="button" asp-route-id="@item.PostId" class="EditButton">
+                                <i class="fa fa-edit" style="color: black; font-size: 22px"></i>
+                            </a>
+
+                            <form asp-action="Delete" asp-route-id="@item.PostId" id="Formdelete">
+                                <button type="submit" class="DeleteButton">
+                                    <i class="fa fa-trash " style="color: red; font-size: 20px"></i>
+                                </button>
+                            </form>
+                        }
+
+                        @if (item.Likes.Count > 0)
+                        {
+
+                            bool isLiked = ValidationIsLiked(item.Likes);
+                            @if (isLiked)
+                            {
+                                <button id="likeButton" data-postId="@item.PostId" class="bottom-element">
+                                    <i class="fas fa-thumbs-up likeIcon" style="color: blue"> @item.Likes.Count</i>
+                                </button>
+                            }
+                            else
+                            {
+                                <button id="likeButton" data-postId="@item.PostId" @(isAuthenticated ? "" : "disabled")
+                                    class="bottom-element">
+                                    <i class="fas fa-thumbs-up likeIcon"> @item.Likes.Count</i>
+                                </button>
+                            }
+                        }
+                        else
+                        {
+                            <button id="likeButton" data-postId="@item.PostId" @(isAuthenticated ? "" : "disabled")
+                                class="bottom-element">
+                                <i class="fas fa-thumbs-up likeIcon"> @item.Likes.Count</i>
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+
+
+        </div>
+        <div class="form_container">
+            <form method="post" enctype="multipart/form-data" >
+                @if (isAuthenticated)
+                {
+                    <h1 class="text-center">New post</h1>
+
+                    <input type="hidden" asp-for="UsuarioId" value="@ViewBag.Usuario">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" placeholder="Title:" asp-for="Title">
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" placeholder="Menssage:" asp-for="Menssage">
+                                <span asp-validation-for="Menssage" class="text-danger"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" placeholder="Tags: #" asp-for="Tags">
+                                <span asp-validation-for="Tags" class="text-danger"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="file" class="form-control" asp-for="File">
+                                <span asp-validation-for="File" class="text-danger"></span>
+                            </td>
+                        </tr>
+
+                        <tr class="d-flex justify-content-center">
+                            <td>
+                                <button type="submit" class="btn btn-outline-success ">Insert</button>
+                            </td>
+                        </tr>
+                    </table>
+                }
+                else
+                {
+                    <h1 class="text-center h4">Please Sign In to create your <br /> own PostCard and like other`s</h1>
+                }
+            </form>
+        </div>
+</div>
+
+
+
+@functions {
+    bool ValidationIsLiked(IEnumerable<Likes> elementos)
+    {
+
+
+        foreach (var elemento in elementos)
+        {
+
+            if (elemento.UsuarioId == ViewBag.Usuario)
+            {
+                return true; // Retorna true tan pronto como se encuentra un elemento que cumple la condición
+            }
+        }
+        return false; // Retorna false si ningún elemento cumple la condición
+    }
+}

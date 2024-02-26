@@ -1,0 +1,48 @@
+﻿@model PostCard.Models.ViewModel.UsuarioLogincs
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<section>
+    <div class="container ">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+
+                        <h3 class="mb-5">Log in</h3>
+                        <form asp-action="Login">
+                            <div class="form-outline mb-3">
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                                <input type="email" class="form-control" asp-for="Email" />
+                                <label class="form-label" for="typeEmailX-2">Email</label>
+                            </div>
+
+                            <div class="form-outline mb-4">
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                                <input type="password" class="form-control" asp-for="Password" />
+                                <label class="form-label" for="typePasswordX-2">Password</label>
+                            </div>
+
+                            <button class="btn btn-primary btn-lg btn-block" type="submit">Log in</button>
+                        </form>
+                        @if (ViewData["error"] != null)
+                        {
+                            <span class="text-danger">@ViewData["error"]</span>
+                        }
+                        <p class="pt-3">Don't have an account?<a asp-action="SignUp" class="text-blue-50 fw-bold">Sign Up</a></p>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

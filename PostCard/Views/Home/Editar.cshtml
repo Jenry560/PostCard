@@ -1,0 +1,127 @@
+﻿@model PostCard.Models.ViewModel.EditPostModel
+@using Microsoft.AspNetCore.Authorization;
+
+
+<div class="container content_home">
+        <div class="card_container">
+            @foreach (var item in ViewBag.Post)
+            {
+
+
+                <div class="card pb-3 pt-4" style="width: 18rem; height: min-content">
+
+                    <img class="card-img-top img" src="data:image/jpg; base64, @item.Image" alt="Card image cap">
+                    <div class="texto">
+                        <i class="fa fa-user"></i>
+                        <div class="">@item.Usuarios.Name @item.Usuarios.LastName</div>
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Title </h5>
+                        <p class="card-text">@item.Menssage</p>
+                        <p class="card-text" style="color: gray">#@item.Tags</p>
+                        @if (item.UsuarioId == ViewBag.Usuario)
+                        {
+                            <a asp-action="Editar" type="button" asp-route-id="@item.PostId" class="EditButton">
+                                <i class="fa fa-edit" style="color: black; font-size: 22px"></i>
+                            </a>
+
+                            <form asp-action="Delete" asp-route-id="@item.PostId" id="Formdelete">
+                                <button type="submit" class="DeleteButton">
+                                    <i class="fa fa-trash " style="color: red; font-size: 20px"></i>
+                                </button>
+                            </form>
+                        }
+
+                        @if (item.Likes.Count > 0)
+                        {
+
+                            bool isLiked = ValidationIsLiked(item.Likes);
+                            @if (isLiked)
+                            {
+                                <button id="likeButton" data-postId="@item.PostId" class="bottom-element">
+                                    <i class="fas fa-thumbs-up likeIcon" style="color: blue"> @item.Likes.Count</i>
+                                </button>
+                            }
+                            else
+                            {
+                                <button id="likeButton" data-postId="@item.PostId" class="bottom-element">
+                                    <i class="fas fa-thumbs-up likeIcon"> @item.Likes.Count</i>
+                                </button>
+                            }
+                        }
+                        else
+                        {
+                            <button id="likeButton" data-postId="@item.PostId" class="bottom-element">
+                                <i class="fas fa-thumbs-up likeIcon"> @item.Likes.Count</i>
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+
+
+        </div>
+        <div class="form_container">
+            <form method="post" enctype="multipart/form-data" class="form_container">
+
+                <h1 class="text-center">Edit post</h1>
+
+                <input type="hidden" asp-for="UsuarioId" value="@ViewBag.Usuario">
+                <input type="hidden" asp-for="PostId">
+                <input type="hidden" asp-for="Image">
+                <table class="table">
+                    <tr>
+                        <td>
+                            <input type="text" class="form-control" placeholder="Title:" asp-for="Title">
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <input type="text" class="form-control" placeholder="Menssage:" asp-for="Menssage">
+                            <span asp-validation-for="Menssage" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" class="form-control" placeholder="Tags: #" asp-for="Tags">
+                            <span asp-validation-for="Tags" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="file" class="form-control" asp-for="File">
+                        </td>
+                    </tr>
+
+                    <tr class="d-flex justify-content-center">
+                        <td>
+                            <button type="submit" class="btn btn-outline-success ">Edit</button>
+                        </td>
+                    </tr>
+                </table>
+
+            </form>
+        </div>
+</div>
+
+
+
+@functions {
+    bool ValidationIsLiked(IEnumerable<Likes> elementos)
+    {
+
+
+        foreach (var elemento in elementos)
+        {
+
+            if (elemento.UsuarioId == ViewBag.Usuario)
+            {
+                return true; // Retorna true tan pronto como se encuentra un elemento que cumple la condición
+            }
+        }
+        return false; // Retorna false si ningún elemento cumple la condición
+    }
+}

@@ -1,0 +1,62 @@
+﻿@model PostCard.Models.Usuario
+
+@{
+    ViewData["Title"] = "SignUp";
+}
+
+<section>
+    <div class="container ">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+
+                        <h3 class="mb-5">Sign Up</h3>
+                        <form asp-action="SignUp">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-outline">
+                                    <span asp-validation-for="Name" class="text-danger" ></span>
+                                    <input type="text" class="form-control" asp-for="Name" />
+                                    <label class="form-label" for="form3Example1">First name</label>
+                                    
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-outline">
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                     <input type="text" class="form-control" asp-for="LastName" />
+                                    <label class="form-label" for="form3Example2">Last name</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-outline mb-3">
+                            <span asp-validation-for="email" class="text-danger"></span>
+                            <input type="email"  class="form-control" asp-for="email" />
+                            <label class="form-label" for="typeEmailX-2">Email</label>
+                        </div>
+
+                        <div class="form-outline mb-4">
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                            <input type="password" class="form-control"  asp-for="Password"/>
+                            <label class="form-label" for="typePasswordX-2">Password</label>
+                        </div>
+
+                        <button class="btn btn-primary btn-lg btn-block" type="submit">Sign Up</button>
+                        </form>
+                        @if(ViewData["error"] != null)
+                        {
+                            <span class="text-danger">@ViewData["error"]</span>
+                        }
+                        <p class="pt-3">Already have an account?<a asp-action="Login" class="text-blue-50 fw-bold">Log In</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
